@@ -1,0 +1,4 @@
+interface:
+  display_name: "SLAM Tutorial Implementer"
+  short_description: "Build one notebook-and-arena learning episode"
+  default_prompt: "Use $slam-tutorial-implementer to implement one numbered SLAM episode from the curriculum, add its conceptual notebook voiceover and arena capability when specified, and leave all changes uncommitted for review."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SLAM Lesson Closer"
+  short_description: "Commit and tag a reviewed SLAM episode"
+  default_prompt: "Use $slam-lesson-closer to review and locally commit and tag the finished SLAM episode. Do not push."
