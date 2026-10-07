@@ -1,0 +1,2 @@
+# Keep text checkouts consistent for formatting on Windows and Unix.
+* text=auto eol=lf

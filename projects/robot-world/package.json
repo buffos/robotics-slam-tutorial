@@ -1,0 +1,31 @@
+{
+  "name": "@learning-slam/robot-world",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit && tsc --project tsconfig.simulation.json",
+    "format": "prettier --write src tests index.html package.json tsconfig.json tsconfig.simulation.json README.md",
+    "format:check": "prettier --check src tests index.html package.json tsconfig.json tsconfig.simulation.json README.md",
+    "check": "npm run format:check && npm test && npm run build"
+  },
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "happy-dom": "20.14.5",
+    "prettier": "3.9.9",
+    "typescript": "7.0.2",
+    "vite": "8.3.3",
+    "vitest": "5.0.3"
+  }
+}
