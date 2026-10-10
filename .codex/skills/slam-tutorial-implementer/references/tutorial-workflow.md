@@ -17,11 +17,26 @@ Existing repository conventions take precedence over example paths below. When n
 
 ## Build the notebook
 
-1. State the question the episode answers and connect it to prior learning.
-2. Introduce the intuition, then work through a small numerical or geometric example.
-3. Make the important quantities visible with runnable cells and plots or diagrams where useful.
-4. Let the learner vary inputs and observe how the result changes; explain assumptions and edge cases.
-5. End with the takeaway and a short bridge to the arena or the next numbered episode.
+1. Start each experiment with a concrete question and its physical setup, connected to prior learning. State what we know and what we want to find. Identify each quantity's meaning, units, and frame where relevant, and explain why the desired result is useful.
+2. Introduce the intuition with a small numerical or geometric example. Define new objects and relationships before using them in formulas. For example, a sensor mounting defined in the robot frame is measured relative to the robot; that alone does not imply coincident origins or aligned axes.
+3. Present the calculation as a sequence of purposeful steps: "We do this because we need that." For each new operation, identify its input, what it produces, and how that result supports the next step. Introduce the code after explaining the need it satisfies.
+4. Show the mathematical bridge between those steps. Use LaTeX for equations and matrices. Expand a new expression into components or a worked example when compact notation hides the reasoning, then introduce the compact form. Explain representation choices such as matrix blocks, multiplication order, and the extra homogeneous coordinate when they first appear. Define a transformation's source and target, and motivate an inverse by stating which coordinates we have and which we need.
+5. Make the result visible with runnable plots or diagrams for geometric and numerical experiments. Connect arrows, origins, colors, and displayed numbers to the quantities just calculated. Explain what should change and what stays fixed before asking the learner to predict the result.
+6. Provide controls or editable inputs and an exploration sequence with progressive difficulty. Begin with a simple configuration, vary one quantity at a time, then combine changes once their separate effects are clear. Introduce diagnostic comparisons, such as a deliberately incorrect matrix product, after the correct result is understood.
+7. End with the takeaway and a short bridge to the arena or the next numbered episode. State any actual dependencies. When the notebook is independent, present the arena as the next application of the idea and identify the capability to implement there.
+
+Scale the explanation to the calculation. A familiar one-step operation may need one sentence; a new chain of frames needs explicit steps. Keep the reasoning in learner-facing Markdown, with code comments supporting the implementation. A formula or a long comment alone is not a substitute for explaining why the calculation is needed.
+
+### Example: a sensor mounted on a robot
+
+Use this as an example of the reasoning sequence, adapting the detail to the episode:
+
+- **Question and knowns:** Given a landmark's world position, the robot's world pose, and the sensor's mounting relative to the robot, find the landmark's sensor coordinates. Explain the mounting offset and angle so the learner can picture the three frames.
+- **First step and reason:** Build `world_from_robot` because we know the robot pose in the world; it converts robot coordinates into world coordinates.
+- **Next step and reason:** Build `robot_from_sensor` because we know the mounting relative to the robot; it converts sensor coordinates into robot coordinates.
+- **Join the steps:** Show sensor → robot → world before writing `world_from_sensor = world_from_robot @ robot_from_sensor`. Substitute one point-transformation equation into the other to explain why the right-hand matrix acts first.
+- **Answer the question:** The known landmark is in world coordinates, so invert the composed matrix to obtain world → sensor, then transform that landmark. Explain the meaning of the resulting sensor coordinates.
+- **Explore gradually:** Start with zero mounting offset and angle, add an offset, add an angle, then move the robot while holding the mounting fixed. Tie each change to the figure.
 
 Keep cells runnable from a fresh kernel in order. Use the repository's established kernel and dependencies; if none exist, choose the simplest suitable setup and record it in the notebook. Prefer Python for numerical exploration unless the repository or episode has a reason to use another kernel.
 
@@ -38,3 +53,5 @@ Keep the main robot arena cumulative. Create a separate focused playground when 
 ## Keep scope and evidence clear
 
 Implement only the selected row's promised capability. Do not rewrite earlier notebooks to match a new style unless the requested episode requires it. Record manual run instructions in the notebook when useful. For code episodes, add or update and run the focused tests described in references/testing-strategy.md before handing the episode to slam-lesson-closer for commit and tags. For notebook-only or documentation-only episodes, report which checks were relevant and what remains unexecuted.
+
+Before handoff, read each experiment as a learner encountering the idea for the first time. Check that the question, known inputs, desired output, reason for each operation, and connection to the visual result are clear. Check that the prose, equations, code, and figures agree on units and frame direction, and that new compact notation follows enough explanation to reconstruct the calculation.

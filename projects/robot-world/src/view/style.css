@@ -28,6 +28,8 @@ button:disabled {
   opacity: 0.55;
 }
 button:focus-visible,
+select:focus-visible,
+input:focus-visible,
 a:focus-visible {
   outline: 3px solid #3a947f;
   outline-offset: 4px;
@@ -409,6 +411,97 @@ kbd {
   font-size: 10px;
   color: #72939e;
 }
+.frame-panel {
+  border-top: 1px solid #27424e;
+  padding: 20px 24px;
+  color: #dce9e9;
+}
+.frame-inspection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 30px;
+  align-items: start;
+}
+.frame-choices h2 {
+  color: #a0bfc7;
+  margin-bottom: 14px;
+}
+.frame-choices > label {
+  display: block;
+  font-size: 11px;
+  color: #afc5cc;
+}
+#frame-landmark {
+  display: block;
+  width: 100%;
+  margin: 7px 0 13px;
+  padding: 9px;
+  border: 1px solid #42616b;
+  border-radius: 6px;
+  background: #1b3541;
+  color: #e7f0f0;
+  font: inherit;
+  font-size: 12px;
+}
+.frame-choices .axes-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  cursor: pointer;
+}
+#show-frames {
+  width: 16px;
+  height: 16px;
+  accent-color: #8ee4ce;
+}
+.frame-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.frame-table caption {
+  text-align: left;
+  margin-bottom: 10px;
+  color: #afc5cc;
+  font-size: 11px;
+}
+.frame-table th,
+.frame-table td {
+  padding: 7px 0;
+  text-align: right;
+  border-bottom: 1px solid #27424e;
+}
+.frame-table th:first-child {
+  text-align: left;
+}
+.frame-table thead th {
+  color: #89a6b0;
+  font-size: 10px;
+  font-weight: 400;
+}
+.frame-table tbody th {
+  font-weight: 500;
+}
+.frame-world {
+  color: #aac3d2;
+}
+.frame-robot {
+  color: #8ee4ce;
+}
+.frame-sensor {
+  color: #ffb584;
+}
+.frame-hint {
+  margin: 14px 0 0;
+  color: #89a6b0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.frame-hint + .frame-hint {
+  margin-top: 4px;
+}
 .arena-footer strong {
   font-weight: 500;
   color: #b3c9cf;
@@ -552,6 +645,13 @@ kbd {
     gap: 7px;
     padding: 12px;
     font-size: 9px;
+  }
+  .frame-panel {
+    padding: 17px 12px;
+  }
+  .frame-inspection {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
   .sidebar {
     grid-template-columns: 1fr;

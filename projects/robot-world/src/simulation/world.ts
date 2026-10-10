@@ -1,4 +1,5 @@
 import type { RobotPose } from "./robot-state";
+import type { RigidTransform2 } from "./rigid-transform";
 
 /** A fixed point in the world; color, marker shape, and labels belong to the view. */
 export interface Landmark {
@@ -19,6 +20,8 @@ export interface WorldDefinition {
     // Angular speed uses radians per second; linear speed uses meters per second.
     readonly angularSpeed: number;
     readonly startPose: RobotPose;
+    // Fixed sensor origin and heading expressed in the robot frame, in m/rad.
+    readonly sensorMount: RigidTransform2;
   };
 }
 
@@ -39,5 +42,6 @@ export const DEFAULT_WORLD: WorldDefinition = {
     linearSpeed: 1.8,
     angularSpeed: Math.PI / 2,
     startPose: { x: 0, y: 0, heading: 0 },
+    sensorMount: { x: 0.25, y: 0.1, heading: Math.PI / 6 },
   },
 };

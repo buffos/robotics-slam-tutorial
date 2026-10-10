@@ -98,9 +98,11 @@ describe("page presentation boundary", () => {
     expect(panel.canvas.hidden).toBe(true);
     expect(element("#simulation-status").textContent).toBe("Unavailable");
     expect(
-      [...document.querySelectorAll("button")].every(
-        (button) => button.disabled,
-      ),
+      [
+        ...document.querySelectorAll<
+          HTMLButtonElement | HTMLInputElement | HTMLSelectElement
+        >("button, input, select"),
+      ].every((control) => control.disabled),
     ).toBe(true);
   });
 });

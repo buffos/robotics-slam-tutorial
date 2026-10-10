@@ -1,8 +1,9 @@
 # Episodes
 
-| Episode                                        | Question                               | Experiment                                       | Voiceover                                  | Checkpoint    |
-| ---------------------------------------------- | -------------------------------------- | ------------------------------------------------ | ------------------------------------------ | ------------- |
-| [001 · Robot world](001-robot-world/README.md) | What are we moving, and in what world? | [Robot world](../projects/robot-world/README.md) | [Script](../voiceovers/001-robot-world.md) | `slam-ep-001` |
+| Episode                                                    | Question                                      | Experiment                                                                                                   | Voiceover                                        | Checkpoint    |
+| ---------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ | ------------- |
+| [001 · Robot world](001-robot-world/README.md)             | What are we moving, and in what world?        | [Robot world](../projects/robot-world/README.md)                                                             | [Script](../voiceovers/001-robot-world.md)       | `slam-ep-001` |
+| [002 · Coordinate frames](002-coordinate-frames/README.md) | How can one point have different coordinates? | [Notebook](002-coordinate-frames/coordinate-frames.ipynb) · [Robot world](../projects/robot-world/README.md) | [Script](../voiceovers/002-coordinate-frames.md) | `slam-ep-002` |
 
 Open a lesson's README first. Its folder holds that lesson's notebook or exercise assets when needed. Project guides contain the commands for executable applications.
 

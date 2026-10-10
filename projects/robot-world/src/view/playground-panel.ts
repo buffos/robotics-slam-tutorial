@@ -1,17 +1,12 @@
 import type { RobotPose } from "../simulation/robot-state";
 import type { WorldDefinition } from "../simulation/world";
 import type { CameraView } from "./arena-view";
+import { pageElement as element } from "./page-element";
 
 export interface PlaygroundActions {
   readonly onPause: () => void;
   readonly onReset: () => void;
   readonly onCamera: (view: CameraView) => void;
-}
-
-function element<T extends HTMLElement>(selector: string): T {
-  const result = document.querySelector<T>(selector);
-  if (!result) throw new Error(`Required page element is missing: ${selector}`);
-  return result;
 }
 
 /** Page presentation: show values and report actions to the composition layer. */
@@ -102,8 +97,12 @@ export class PlaygroundPanel {
     const status = element("#simulation-status");
     status.textContent = "Unavailable";
     status.dataset.state = "paused";
-    document.querySelectorAll<HTMLButtonElement>("button").forEach((button) => {
-      button.disabled = true;
-    });
+    document
+      .querySelectorAll<
+        HTMLButtonElement | HTMLInputElement | HTMLSelectElement
+      >("button, input, select")
+      .forEach((control) => {
+        control.disabled = true;
+      });
   }
 }

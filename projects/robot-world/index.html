@@ -19,7 +19,7 @@
       <a class="brand" href="./" aria-label="Robot world home">
         <span class="brand-mark" aria-hidden="true">↗</span>
         <span
-          ><span class="eyebrow">Learning SLAM / Episode 001</span
+          ><span class="eyebrow">Learning SLAM / Episode 002</span
           ><strong>Robot world</strong></span
         >
       </a>
@@ -31,14 +31,14 @@
     <main class="workspace">
       <aside class="sidebar" aria-label="World guide and driving controls">
         <section class="intro">
-          <p class="eyebrow">01 / Meet the simulator</p>
+          <p class="eyebrow">02 / Coordinate frames</p>
           <h1>
-            A world to<br />
-            move in.
+            One point.<br />
+            Three frames.
           </h1>
           <p>
-            One robot. Six fixed landmarks. Explore the floor and see how the
-            view changes.
+            Drive the robot and follow its axes. A fixed landmark has different
+            coordinates in the world, robot, and sensor frames.
           </p>
         </section>
 
@@ -119,11 +119,11 @@
             <button
               id="perspective-button"
               class="camera-button"
-              aria-pressed="true"
+              aria-pressed="false"
             >
               Perspective
             </button>
-            <button id="top-button" class="camera-button" aria-pressed="false">
+            <button id="top-button" class="camera-button" aria-pressed="true">
               Top view
             </button>
           </div>
@@ -166,6 +166,53 @@
             >
           </div>
         </div>
+        <section class="frame-panel" aria-labelledby="frames-heading">
+          <div class="frame-inspection">
+            <div class="frame-choices">
+              <h2 id="frames-heading" class="eyebrow">Inspect one landmark</h2>
+              <label for="frame-landmark">Selected point</label>
+              <select id="frame-landmark"></select>
+              <label class="axes-choice" for="show-frames">
+                <input id="show-frames" type="checkbox" checked />
+                Show labeled frame axes
+              </label>
+            </div>
+            <table class="frame-table">
+              <caption>
+                Same landmark, coordinates in meters
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Frame</th>
+                  <th scope="col">x / m</th>
+                  <th scope="col">y / m</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" class="frame-world">World · W</th>
+                  <td id="frame-world-x"></td>
+                  <td id="frame-world-y"></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="frame-robot">Robot · R</th>
+                  <td id="frame-robot-x"></td>
+                  <td id="frame-robot-y"></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="frame-sensor">Sensor · S</th>
+                  <td id="frame-sensor-x"></td>
+                  <td id="frame-sensor-y"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="sensor-mount" class="frame-hint"></p>
+          <p class="frame-hint">
+            +x points forward; +y points left. The sensor is fixed to the robot.
+            All values use the exact world geometry.
+          </p>
+        </section>
         <footer class="arena-footer">
           <span
             ><strong>Look around</strong> Drag to orbit · right-drag to pan ·

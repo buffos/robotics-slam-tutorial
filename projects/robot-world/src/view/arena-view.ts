@@ -3,7 +3,6 @@ import {
   AmbientLight,
   BoxGeometry,
   BufferGeometry,
-  CanvasTexture,
   Color,
   ConeGeometry,
   CylinderGeometry,
@@ -21,8 +20,6 @@ import {
   PerspectiveCamera,
   Scene,
   SphereGeometry,
-  Sprite,
-  SpriteMaterial,
   Texture,
   TorusGeometry,
   WebGLRenderer,
@@ -30,7 +27,10 @@ import {
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { robotTransform } from "./robot-transform";
 import { cameraFieldOfView } from "./camera-framing";
-import type { RobotPose } from "../simulation/robot-state";
+import { FrameOverlay } from "./frame-overlay";
+import { frameViewState } from "./frame-view-state";
+import { sceneLabel } from "./scene-label";
+import type { CoordinateFrameSnapshot } from "../simulation/coordinate-frames";
 import type { WorldDefinition } from "../simulation/world";
 
 export type CameraView = "perspective" | "top";
@@ -41,6 +41,7 @@ export class ArenaView {
   private readonly renderer: WebGLRenderer;
   private readonly controls: OrbitControls;
   private readonly robot = new Group();
+  private readonly frameOverlay = new FrameOverlay();
   private readonly resizeObserver: ResizeObserver;
 
   constructor(
@@ -62,13 +63,14 @@ export class ArenaView {
     this.controls.maxDistance = 38;
     this.controls.minPolarAngle = 0.00001;
     this.controls.maxPolarAngle = Math.PI / 2 - 0.04;
-    this.setCamera("perspective");
+    this.setCamera("top");
 
     this.addLighting(world);
     this.addFloor(world);
     this.addLandmarks(world);
     this.addRobot(world.robot.radius);
     this.scene.add(this.robot);
+    this.scene.add(this.frameOverlay.object);
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(canvas);
@@ -90,12 +92,13 @@ export class ArenaView {
     this.controls.enableDamping = true;
   }
 
-  render(pose: RobotPose): void {
+  render(frames: CoordinateFrameSnapshot, axesVisible: boolean): void {
     // Read the simulator's finished pose and move the mesh to match it.
     // Mesh positions and OrbitControls never feed back into robot state.
-    const transform = robotTransform(pose);
+    const transform = robotTransform(frames.worldFromRobot);
     this.robot.position.set(transform.x, transform.y, transform.z);
     this.robot.rotation.y = transform.rotationY;
+    this.frameOverlay.render(frameViewState(frames), axesVisible);
     // This control updates the inspection camera, independently of driving.
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
@@ -235,7 +238,7 @@ export class ArenaView {
       ring.rotation.x = Math.PI / 2;
       ring.position.y = 0.025;
       marker.add(ring);
-      const label = this.label(landmark.id);
+      const label = sceneLabel(landmark.id);
       label.position.y = 1.4;
       marker.add(label);
       this.scene.add(marker);
@@ -277,16 +280,16 @@ export class ArenaView {
       this.robot.add(wheel);
     }
 
+    // A dark, matte marker keeps the robot's +x direction visible on its light body.
     const nose = new Mesh(
-      new ConeGeometry(0.09, 0.28, 3),
+      new ConeGeometry(0.13, 0.4, 3),
       new MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0x274e45,
-        roughness: 0.4,
+        color: 0x10242b,
+        roughness: 0.8,
       }),
     );
     nose.rotation.z = -Math.PI / 2;
-    nose.position.set(0.2, 0.49, 0);
+    nose.position.set(0.27, 0.52, 0);
     this.robot.add(nose);
     const ring = new Mesh(
       new TorusGeometry(radius - 0.015, 0.01, 8, 40),
@@ -295,29 +298,5 @@ export class ArenaView {
     ring.rotation.x = Math.PI / 2;
     ring.position.y = 0.02;
     this.robot.add(ring);
-  }
-
-  private label(text: string): Sprite {
-    const canvas = document.createElement("canvas");
-    canvas.width = 128;
-    canvas.height = 64;
-    const context = canvas.getContext("2d");
-    if (!context)
-      throw new Error("A 2D canvas context is required for landmark labels.");
-    context.fillStyle = "#142d38";
-    context.beginPath();
-    context.roundRect(4, 4, 120, 56, 12);
-    context.fill();
-    context.fillStyle = "#f1c49e";
-    context.font = "600 36px system-ui, sans-serif";
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(text, 64, 32);
-    const texture = new CanvasTexture(canvas);
-    const sprite = new Sprite(
-      new SpriteMaterial({ map: texture, transparent: true }),
-    );
-    sprite.scale.set(0.8, 0.4, 1);
-    return sprite;
   }
 }

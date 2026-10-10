@@ -24,6 +24,13 @@ episodes/
   README.md                     Episode index
   001-robot-world/
     README.md                   Lesson outline, experiments, and verification
+  002-coordinate-frames/
+    README.md                   Notebook setup, frame experiments, and verification
+    coordinate-frames.ipynb      Progressive diagrams and interactive controls
+    plotting.py                 Supporting frame and point drawing
+    requirements.txt            Direct notebook dependencies
+    requirements-lock.txt       Verified Windows dependency versions
+    verify_notebook.py          Fresh-kernel execution and widget checks
 projects/
   robot-world/
     README.md                   Setup, controls, and architecture
@@ -33,10 +40,11 @@ projects/
     tests/                      Behavior and rendering-contract tests
 voiceovers/
   001-robot-world.md             Script, learner code map, and file responsibilities
+  002-coordinate-frames.md       Chronological frame lesson and implementation tour
 ```
 
 Every lesson gets an `episodes/NNN-topic/` directory. When a lesson includes a notebook, keep its one notebook and exercise assets inside that directory. Use the episode README as the entry point, and link every implemented episode from the index.
 
 Every application or focused playground gets its own `projects/name/` directory with its manifest, lockfile, code, tests, and README. Run its commands from that directory. Keep generated dependencies and build artifacts there too, outside Git. Share code only when an implemented lesson needs it.
 
-The robot world is cumulative. Episode tags preserve earlier runnable states without copying the application into each lesson folder. The episode 001 checkpoint is `slam-ep-001`.
+The robot world is cumulative. Episode tags preserve earlier runnable states without copying the application into each lesson folder. The checkpoints are `slam-ep-001` for the original arena and `slam-ep-002` for coordinate frames.
