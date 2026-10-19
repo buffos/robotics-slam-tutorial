@@ -7,6 +7,15 @@ export interface Point2 {
 }
 
 /**
+ * A vector with no position: for example a displacement or a forward axis.
+ * Its magnitude and units are retained; it need not be a unit vector.
+ */
+export interface Direction2 {
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
  * A source frame's pose in a target frame. The translation is the source
  * origin expressed in target meters; heading is counterclockwise in radians.
  * Name values targetFromSource, for example worldFromRobot.
@@ -75,6 +84,40 @@ export function transformPoint(
     x: pointInTarget.get(0, 0),
     y: pointInTarget.get(1, 0),
   };
+}
+
+/** Express a direction in the target axes: d_target = R d_source. */
+export function transformDirection(
+  targetFromSource: RigidTransform2,
+  directionInSource: Direction2,
+): Direction2 {
+  const matrix = toHomogeneousMatrix(targetFromSource);
+  validatePoint(directionInSource);
+  // A direction has w=0. Multiplying the translation column by zero prevents
+  // a change of origin from adding a location to this vector.
+  const directionInTarget = matrix.mmul(
+    Matrix.columnVector([directionInSource.x, directionInSource.y, 0]),
+  );
+  return { x: directionInTarget.get(0, 0), y: directionInTarget.get(1, 0) };
+}
+
+/**
+ * Move geometry within one frame around a pivot expressed in that frame.
+ * T(+pivot) R(angle) T(-pivot): the right-hand shift acts first.
+ * This is an active motion, rather than re-expressing a fixed point.
+ */
+export function rotationAboutPivot(
+  pivot: Point2,
+  angle: number,
+): RigidTransform2 {
+  validatePoint(pivot);
+  return composeTransforms(
+    { ...pivot, heading: 0 },
+    composeTransforms(
+      { x: 0, y: 0, heading: angle },
+      { x: -pivot.x, y: -pivot.y, heading: 0 },
+    ),
+  );
 }
 
 /**

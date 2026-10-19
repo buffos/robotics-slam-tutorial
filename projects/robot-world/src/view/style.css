@@ -411,26 +411,31 @@ kbd {
   font-size: 10px;
   color: #72939e;
 }
+.pivot-panel,
 .frame-panel {
   border-top: 1px solid #27424e;
   padding: 20px 24px;
   color: #dce9e9;
 }
+.pivot-inspection,
 .frame-inspection {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
   gap: 30px;
   align-items: start;
 }
+.pivot-choices h2,
 .frame-choices h2 {
   color: #a0bfc7;
   margin-bottom: 14px;
 }
+.pivot-choices > label,
 .frame-choices > label {
   display: block;
   font-size: 11px;
   color: #afc5cc;
 }
+#rotation-pivot,
 #frame-landmark {
   display: block;
   width: 100%;
@@ -501,6 +506,31 @@ kbd {
 }
 .frame-hint + .frame-hint {
   margin-top: 4px;
+}
+
+.pivot-choices input[type="range"] {
+  width: 100%;
+  accent-color: #ffe2a2;
+  margin: 0.7rem 0;
+}
+
+.pivot-choices output {
+  color: #ffe2a2;
+  float: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.pivot-table td {
+  white-space: nowrap;
+}
+
+.pivot-choices .button {
+  width: 100%;
+}
+
+.pivot-choices :disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .arena-footer strong {
   font-weight: 500;
@@ -646,9 +676,11 @@ kbd {
     padding: 12px;
     font-size: 9px;
   }
+  .pivot-panel,
   .frame-panel {
     padding: 17px 12px;
   }
+  .pivot-inspection,
   .frame-inspection {
     grid-template-columns: 1fr;
     gap: 18px;

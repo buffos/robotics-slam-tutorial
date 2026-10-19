@@ -30,6 +30,9 @@ import { cameraFieldOfView } from "./camera-framing";
 import { FrameOverlay } from "./frame-overlay";
 import { frameViewState } from "./frame-view-state";
 import { sceneLabel } from "./scene-label";
+import { PivotOverlay } from "./pivot-overlay";
+import { pivotViewState } from "./pivot-view-state";
+import type { PivotRotationSnapshot } from "../simulation/pivot-rotation";
 import type { CoordinateFrameSnapshot } from "../simulation/coordinate-frames";
 import type { WorldDefinition } from "../simulation/world";
 
@@ -42,12 +45,14 @@ export class ArenaView {
   private readonly controls: OrbitControls;
   private readonly robot = new Group();
   private readonly frameOverlay = new FrameOverlay();
+  private readonly pivotOverlay: PivotOverlay;
   private readonly resizeObserver: ResizeObserver;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
     world: WorldDefinition,
   ) {
+    this.pivotOverlay = new PivotOverlay(world.robot.radius);
     this.renderer = new WebGLRenderer({ canvas, antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
@@ -71,6 +76,7 @@ export class ArenaView {
     this.addRobot(world.robot.radius);
     this.scene.add(this.robot);
     this.scene.add(this.frameOverlay.object);
+    this.scene.add(this.pivotOverlay.object);
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(canvas);
@@ -92,13 +98,18 @@ export class ArenaView {
     this.controls.enableDamping = true;
   }
 
-  render(frames: CoordinateFrameSnapshot, axesVisible: boolean): void {
+  render(
+    frames: CoordinateFrameSnapshot,
+    axesVisible: boolean,
+    pivot: PivotRotationSnapshot | null,
+  ): void {
     // Read the simulator's finished pose and move the mesh to match it.
     // Mesh positions and OrbitControls never feed back into robot state.
     const transform = robotTransform(frames.worldFromRobot);
     this.robot.position.set(transform.x, transform.y, transform.z);
     this.robot.rotation.y = transform.rotationY;
     this.frameOverlay.render(frameViewState(frames), axesVisible);
+    this.pivotOverlay.render(pivot ? pivotViewState(pivot) : null);
     // This control updates the inspection camera, independently of driving.
     this.controls.update();
     this.renderer.render(this.scene, this.camera);

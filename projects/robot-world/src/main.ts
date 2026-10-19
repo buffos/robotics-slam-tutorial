@@ -1,12 +1,18 @@
 import "./view/style.css";
 import { DriveControls } from "./controls/drive-controls";
 import { FrameControls } from "./controls/frame-controls";
+import { PivotControls } from "./controls/pivot-controls";
+import {
+  pivotRotationSnapshot,
+  resolveRotationPivot,
+} from "./simulation/pivot-rotation";
 import { coordinateFrameSnapshot } from "./simulation/coordinate-frames";
 import { RobotSimulation } from "./simulation/robot-simulation";
 import { DEFAULT_WORLD } from "./simulation/world";
 import { ArenaView } from "./view/arena-view";
 import { PlaygroundPanel } from "./view/playground-panel";
 import { FramePanel } from "./view/frame-panel";
+import { PivotPanel } from "./view/pivot-panel";
 
 function start(): void {
   // Compose the independent model, input adapter, scene, and page presentation.
@@ -19,6 +25,12 @@ function start(): void {
   const frameControls = new FrameControls(
     framePanel.landmarkSelect,
     framePanel.axesToggle,
+  );
+  const pivotPanel = new PivotPanel(world);
+  const pivotControls = new PivotControls(
+    pivotPanel.pivotSelect,
+    pivotPanel.angleInput,
+    pivotPanel.applyButton,
   );
 
   function renderState(): void {
@@ -35,20 +47,46 @@ function start(): void {
       world.robot.sensorMount,
       landmark,
     );
-    view.render(frames, inspection.axesVisible);
+    const rotation = pivotControls.read();
+    const pivot = resolveRotationPivot(rotation.pivotId, pose, world);
+    const preview = pivotRotationSnapshot(
+      pose,
+      { pivot, angle: rotation.angle },
+      world,
+    );
+    view.render(
+      frames,
+      inspection.axesVisible,
+      simulation.paused ? preview : null,
+    );
     panel.renderPose(pose);
     framePanel.render(frames);
+    pivotPanel.render(preview, simulation.paused);
   }
+
+  pivotControls.bindApply((selection) => {
+    drive.clear();
+    const pivot = resolveRotationPivot(
+      selection.pivotId,
+      simulation.pose,
+      world,
+    );
+    if (simulation.rotateAboutPivot({ pivot, angle: selection.angle }))
+      pivotControls.resetAngle();
+    renderState();
+  });
 
   panel.bindActions({
     onPause: () => {
       drive.clear();
       simulation.togglePause();
       panel.setPaused(simulation.paused);
+      renderState();
     },
     onReset: () => {
       drive.clear();
       simulation.reset();
+      pivotControls.resetAngle();
       renderState();
     },
     onCamera: (camera) => {
@@ -77,6 +115,7 @@ function start(): void {
     cancelAnimationFrame(frame);
     panel.dispose();
     drive.dispose();
+    pivotControls.dispose();
     view.dispose();
   });
 }

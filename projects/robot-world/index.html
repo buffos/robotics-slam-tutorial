@@ -19,7 +19,7 @@
       <a class="brand" href="./" aria-label="Robot world home">
         <span class="brand-mark" aria-hidden="true">↗</span>
         <span
-          ><span class="eyebrow">Learning SLAM / Episode 002</span
+          ><span class="eyebrow">Learning SLAM / Episode 003</span
           ><strong>Robot world</strong></span
         >
       </a>
@@ -31,14 +31,14 @@
     <main class="workspace">
       <aside class="sidebar" aria-label="World guide and driving controls">
         <section class="intro">
-          <p class="eyebrow">02 / Coordinate frames</p>
+          <p class="eyebrow">03 / Points, directions & pivots</p>
           <h1>
-            One point.<br />
-            Three frames.
+            Pick a landmark.<br />
+            Preview the orbit.
           </h1>
           <p>
-            Drive the robot and follow its axes. A fixed landmark has different
-            coordinates in the world, robot, and sensor frames.
+            Pause, choose a landmark, and set an orbit angle. Gold previews the
+            robot's new center and heading. Apply orbit places it there.
           </p>
         </section>
 
@@ -166,6 +166,80 @@
             >
           </div>
         </div>
+        <section class="pivot-panel" aria-labelledby="pivot-heading">
+          <div class="pivot-inspection">
+            <div class="pivot-choices">
+              <h2 id="pivot-heading" class="eyebrow">
+                Orbit the robot around a point
+              </h2>
+              <label for="rotation-pivot"
+                >Orbit center · fixed world point</label
+              >
+              <select id="rotation-pivot"></select>
+              <label for="pivot-angle"
+                >Orbit angle · counterclockwise
+                <output id="pivot-angle-value" for="pivot-angle"
+                  >0°</output
+                ></label
+              >
+              <input
+                id="pivot-angle"
+                type="range"
+                min="-180"
+                max="180"
+                step="5"
+                value="0"
+              />
+              <button
+                id="apply-rotation"
+                class="button button-primary"
+                disabled
+              >
+                Apply orbit
+              </button>
+            </div>
+            <table class="frame-table pivot-table">
+              <caption>
+                World coordinates · forward vectors have unit length
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Now</th>
+                  <th scope="col">Preview</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Center point · m</th>
+                  <td id="pivot-center-before"></td>
+                  <td id="pivot-center-after"></td>
+                </tr>
+                <tr>
+                  <th scope="row">Forward direction</th>
+                  <td id="pivot-forward-before"></td>
+                  <td id="pivot-forward-after"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="pivot-mode" class="frame-hint">
+            Orbit changes the robot's center and heading while keeping its
+            distance and relative angle to the fixed point constant.
+          </p>
+          <p class="frame-hint">
+            Fixed pivot <span id="pivot-position"></span> m · center-to-pivot
+            distance <span id="pivot-radius"></span> m
+          </p>
+          <p
+            id="pivot-status"
+            class="frame-hint"
+            role="status"
+            aria-live="polite"
+          >
+            Pause the simulation, then choose an angle to preview the orbit.
+          </p>
+        </section>
         <section class="frame-panel" aria-labelledby="frames-heading">
           <div class="frame-inspection">
             <div class="frame-choices">

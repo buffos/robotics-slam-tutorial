@@ -1,6 +1,8 @@
 import { DEFAULT_WORLD } from "./world";
 import type { DriveCommand, RobotPose } from "./robot-state";
 import type { WorldDefinition } from "./world";
+import { poseFitsWorld, rotatePoseAboutPivot } from "./pivot-rotation";
+import type { PivotRotationCommand } from "./pivot-rotation";
 
 export const MAX_STEP_SECONDS = 0.05;
 
@@ -32,6 +34,14 @@ export class RobotSimulation {
   reset(): void {
     // Reset the pose only; a paused experiment stays paused for inspection.
     this.currentPose = { ...this.world.robot.startPose };
+  }
+
+  /** Apply a paused geometry experiment atomically; reject an invalid footprint. */
+  rotateAboutPivot(command: PivotRotationCommand): boolean {
+    const candidate = rotatePoseAboutPivot(this.currentPose, command);
+    if (!this.isPaused || !poseFitsWorld(candidate, this.world)) return false;
+    this.currentPose = candidate;
+    return true;
   }
 
   update(command: DriveCommand, elapsedSeconds: number): void {
