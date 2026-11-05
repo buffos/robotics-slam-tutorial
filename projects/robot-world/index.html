@@ -19,7 +19,7 @@
       <a class="brand" href="./" aria-label="Robot world home">
         <span class="brand-mark" aria-hidden="true">↗</span>
         <span
-          ><span class="eyebrow">Learning SLAM / Episode 003</span
+          ><span class="eyebrow">Learning SLAM / Episode 004</span
           ><strong>Robot world</strong></span
         >
       </a>
@@ -31,14 +31,14 @@
     <main class="workspace">
       <aside class="sidebar" aria-label="World guide and driving controls">
         <section class="intro">
-          <p class="eyebrow">03 / Points, directions & pivots</p>
+          <p class="eyebrow">04 / Inside the motion model</p>
           <h1>
-            Pick a landmark.<br />
-            Preview the orbit.
+            What happens<br />
+            in one drive step?
           </h1>
           <p>
-            Pause, choose a landmark, and set an orbit angle. Gold previews the
-            robot's new center and heading. Apply orbit places it there.
+            The robot already drives and turns. Here we open up the calculation
+            that turns each held command and elapsed time into its next pose.
           </p>
         </section>
 
@@ -82,6 +82,10 @@
           <p class="control-hint">
             Hold a button, or click the world and use <kbd>W A S D</kbd> / arrow
             keys.
+          </p>
+          <p class="control-hint">
+            Full input: 1.8 m/s forward and 90°/s turning. Try W+A to see the
+            robot move and turn in the same step.
           </p>
           <div class="simulation-actions">
             <button
@@ -169,6 +173,7 @@
         <section class="pivot-panel" aria-labelledby="pivot-heading">
           <div class="pivot-inspection">
             <div class="pivot-choices">
+              <p class="eyebrow">Episode 003 · Geometry experiment</p>
               <h2 id="pivot-heading" class="eyebrow">
                 Orbit the robot around a point
               </h2>

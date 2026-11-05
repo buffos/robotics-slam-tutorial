@@ -3,6 +3,7 @@ import type { DriveCommand, RobotPose } from "./robot-state";
 import type { WorldDefinition } from "./world";
 import { poseFitsWorld, rotatePoseAboutPivot } from "./pivot-rotation";
 import type { PivotRotationCommand } from "./pivot-rotation";
+import { step as stepPose } from "./motion-model";
 
 export const MAX_STEP_SECONDS = 0.05;
 
@@ -44,7 +45,7 @@ export class RobotSimulation {
     return true;
   }
 
-  update(command: DriveCommand, elapsedSeconds: number): void {
+  step(command: DriveCommand, elapsedSeconds: number): void {
     // Validate at the boundary before invalid numbers can enter the state.
     if (!Number.isFinite(elapsedSeconds) || elapsedSeconds < 0) {
       throw new RangeError("Elapsed time must be finite and non-negative.");
@@ -60,28 +61,20 @@ export class RobotSimulation {
     // A normalized command scales speed. Speed × seconds gives meters/radians.
     const distance = clamp(command.forward, -1, 1) * robot.linearSpeed * step;
     const turn = clamp(command.turn, -1, 1) * robot.angularSpeed * step;
-    // During a combined drive and turn, approximate translation using the
-    // halfway heading. Using only the old heading would bias the curved path.
-    const middleHeading = this.currentPose.heading + turn / 2;
-    const heading = this.currentPose.heading + turn;
+    // Convert rates to physical increments; the pure model handles their order.
+    const movedPose = stepPose(this.currentPose, {
+      distanceMeters: distance,
+      turnRadians: turn,
+    });
     // Constrain the center by the footprint radius so the whole robot fits.
     const xLimit = this.world.width / 2 - robot.radius;
     const yLimit = this.world.height / 2 - robot.radius;
 
     this.currentPose = {
       // Project forward distance onto the world's x/y axes, then apply walls.
-      x: clamp(
-        this.currentPose.x + Math.cos(middleHeading) * distance,
-        -xLimit,
-        xLimit,
-      ),
-      y: clamp(
-        this.currentPose.y + Math.sin(middleHeading) * distance,
-        -yLimit,
-        yLimit,
-      ),
-      // Wrap to [-π, π] without changing the direction the robot faces.
-      heading: Math.atan2(Math.sin(heading), Math.cos(heading)),
+      x: clamp(movedPose.x, -xLimit, xLimit),
+      y: clamp(movedPose.y, -yLimit, yLimit),
+      heading: movedPose.heading,
     };
   }
 }

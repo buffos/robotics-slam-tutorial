@@ -9,7 +9,7 @@ function drive(
   command: DriveCommand,
   steps: number,
 ): void {
-  for (let index = 0; index < steps; index++) simulation.update(command, 0.05);
+  for (let index = 0; index < steps; index++) simulation.step(command, 0.05);
 }
 
 function atPose(pose: RobotPose): Simulation {
@@ -68,7 +68,7 @@ describe("robot simulation", () => {
       expect(simulation.pose[axis]).toBeCloseTo(limit);
       expect(Math.abs(simulation.pose.x) + 0.38).toBeLessThanOrEqual(8);
       expect(Math.abs(simulation.pose.y) + 0.38).toBeLessThanOrEqual(6);
-      simulation.update({ forward: -1, turn: 0 }, 0.05);
+      simulation.step({ forward: -1, turn: 0 }, 0.05);
       expect(Math.abs(simulation.pose[axis])).toBeLessThan(Math.abs(limit));
     },
   );
@@ -90,13 +90,13 @@ describe("robot simulation", () => {
 
   it("caps a delayed frame to 50 milliseconds", () => {
     const simulation = new RobotSimulation();
-    simulation.update({ forward: 1, turn: 0 }, 30);
+    simulation.step({ forward: 1, turn: 0 }, 30);
     expect(simulation.pose.x).toBeCloseTo(0.09);
   });
 
   it("honors elapsed time for ordinary frames", () => {
     const simulation = new RobotSimulation();
-    simulation.update({ forward: 1, turn: 0 }, 0.01);
+    simulation.step({ forward: 1, turn: 0 }, 0.01);
     expect(simulation.pose.x).toBeCloseTo(0.018);
   });
 
@@ -110,8 +110,8 @@ describe("robot simulation", () => {
 
   it("does not move while idle or when no time has passed", () => {
     const simulation = new RobotSimulation();
-    simulation.update({ forward: 0, turn: 0 }, 0.05);
-    simulation.update({ forward: 1, turn: 1 }, 0);
+    simulation.step({ forward: 0, turn: 0 }, 0.05);
+    simulation.step({ forward: 1, turn: 1 }, 0);
     expect(simulation.pose).toEqual(DEFAULT_WORLD.robot.startPose);
   });
 
@@ -122,7 +122,7 @@ describe("robot simulation", () => {
     expect(simulation.paused).toBe(true);
     expect(simulation.pose).toEqual(DEFAULT_WORLD.robot.startPose);
     simulation.togglePause();
-    simulation.update({ forward: 1, turn: 0 }, 0.05);
+    simulation.step({ forward: 1, turn: 0 }, 0.05);
     expect(simulation.paused).toBe(false);
     expect(simulation.pose.x).toBeCloseTo(0.09);
   });
@@ -147,7 +147,7 @@ describe("robot simulation", () => {
 
   it.each([-1, Infinity, NaN])("rejects invalid elapsed time %s", (elapsed) => {
     const simulation = new RobotSimulation();
-    expect(() => simulation.update({ forward: 1, turn: 0 }, elapsed)).toThrow(
+    expect(() => simulation.step({ forward: 1, turn: 0 }, elapsed)).toThrow(
       RangeError,
     );
     expect(simulation.pose).toEqual(DEFAULT_WORLD.robot.startPose);
@@ -157,8 +157,6 @@ describe("robot simulation", () => {
     { forward: NaN, turn: 0 },
     { forward: 0, turn: Infinity },
   ])("rejects non-finite commands", (command) => {
-    expect(() => new RobotSimulation().update(command, 0.05)).toThrow(
-      RangeError,
-    );
+    expect(() => new RobotSimulation().step(command, 0.05)).toThrow(RangeError);
   });
 });

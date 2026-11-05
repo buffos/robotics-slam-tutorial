@@ -1,6 +1,6 @@
 # Robot world
 
-A cumulative TypeScript and Three.js playground for [episode 001](../../episodes/001-robot-world/README.md), [episode 002](../../episodes/002-coordinate-frames/README.md), and [episode 003](../../episodes/003-points-directions-pivots/README.md). Drive a robot on a bounded floor with six fixed landmarks, inspect its coordinate frames, and preview a rotation around a chosen pivot.
+A cumulative TypeScript and Three.js playground for [episode 001](../../episodes/001-robot-world/README.md), [episode 002](../../episodes/002-coordinate-frames/README.md), [episode 003](../../episodes/003-points-directions-pivots/README.md), and [episode 004](../../episodes/004-robot-motion-model/README.md). Drive a robot on a bounded floor with six fixed landmarks, inspect its coordinate frames, preview a rotation around a chosen pivot, and follow the motion model step by step.
 
 ## Setup
 
@@ -36,7 +36,7 @@ Open the local URL printed by Vite. The browser needs WebGL 2. The application u
 
 You can also focus a drive button with Tab and hold Space or Enter. Releasing a drive control stops that command. Losing canvas focus, window focus, or tab visibility clears held keyboard input. Pointer release, cancellation, and lost capture clear held pointer input. Simulation actions clear all held input. Ctrl, Command, and Alt shortcuts retain their browser behavior.
 
-The pose readout is ground truth. Landmarks do not block the robot, and the model does not simulate acceleration or wheel dynamics. Position uses meters; heading is stored in radians and displayed in degrees. Heading zero faces positive x, with positive turns toward positive y. An update uses the midpoint heading for translation and caps elapsed time at 50 milliseconds.
+The pose readout is ground truth. Landmarks do not block the robot, and the model does not simulate acceleration or wheel dynamics. Position uses meters; heading is stored in radians and displayed in degrees. Heading zero faces positive x, with positive turns toward positive y. A combined drive and turn uses the midpoint heading for translation, and each step caps elapsed time at 50 milliseconds.
 
 Episode 002 starts in Top view to make planar axes easier to read. W labels the world axes, R the robot axes, and S the sensor axes. The table uses matching colors. The sensor origin is `(0.25, 0.10)` meters in the robot frame, at a relative heading of `30°`. Its mounting remains fixed as the robot drives and turns.
 
@@ -51,6 +51,8 @@ Positive angles turn counterclockwise. The purple marker is the fixed pivot; gol
 The preview leaves the current robot pose unchanged. Apply uses the same geometry, checks that the simulation is paused and the resulting footprint fits, then replaces the pose. This is an instantaneous geometry experiment. Its arc illustrates rotation rather than a simulated driving trajectory. A preview outside the arena is red and cannot be applied; the result is rejected rather than clamped.
 
 Applying resets the relative angle to zero and preserves the pivot choice. Reset restores the starting pose and zero angle while preserving pause, pivot selection, and frame inspection choices. Rotation controls are disabled while running.
+
+Episode 004 makes the drive model explicit. `motion-model.ts` provides pure `move`, `rotate`, and `step` operations. A step turns halfway, translates along that heading, and completes the turn; the simulator converts normalized controls and elapsed seconds into the required distance and angle, then enforces its time cap and footprint bounds. Hold W+A in the playground to see translation and turning applied together.
 
 ## Transform calculations
 
@@ -90,12 +92,13 @@ Browser smoke steps and results live in the [episode 001 guide](../../episodes/0
 
 ```text
 src/
-  main.ts                       Compose components; read → update → render
+  main.ts                       Compose components; read → step → render
   simulation/
     robot-state.ts              Pose and drive command contracts, with units
+    motion-model.ts             Pure move, rotate, and midpoint step operations
     rigid-transform.ts          Planar poses and ml-matrix transform operations
     world.ts                    Floor, landmarks, and robot settings
-    robot-simulation.ts         Pose, motion, bounds, pause, and reset
+    robot-simulation.ts         Command rates, time steps, bounds, pause, and reset
     coordinate-frames.ts        Sensor pose and one landmark in three frames
     pivot-rotation.ts           World pivot, rotated pose, preview, footprint check
   controls/
@@ -120,6 +123,7 @@ src/
 tests/
   simulation/
     robot-simulation.test.ts    Simulator behavior, without a browser or GPU
+    motion-model.test.ts        Pure pose movement, rotation, and combined steps
     rigid-transform.test.ts     Direction, inverse, composition, and invariants
     coordinate-frames.test.ts   Physical frames and landmark coordinates
     pivot-rotation.test.ts      Directions, pivots, preview isolation, paused apply
@@ -141,7 +145,7 @@ tsconfig.simulation.json        Check the model without DOM or browser types
 
 Dependencies point inward. The simulation owns state, physical geometry, and motion. It imports no controls, view, DOM, or Three.js code. Controls produce its `DriveCommand`; the view consumes its `RobotPose` and `WorldDefinition`. The page panel reports actions through callbacks. `main.ts` connects these pieces and owns the animation loop, without querying the DOM or formatting readouts.
 
-For the lesson, start with `simulation/robot-state.ts`, `simulation/world.ts`, and `simulation/robot-simulation.ts`. Their comments explain units, heading, integration, and walls. Then read the short animation loop in `main.ts`, the key-to-command conversion, and `view/robot-transform.ts`. The [voiceover's learner code map](../../voiceovers/001-robot-world.md#learner-code-map) lists the study priority for each file.
+For episode 001, start with `simulation/robot-state.ts`, `simulation/world.ts`, and `simulation/robot-simulation.ts`. Their comments explain units, heading, integration, and walls. Then read the short animation loop in `main.ts`, the key-to-command conversion, and `view/robot-transform.ts`. The [voiceover's learner code map](../../voiceovers/001-robot-world.md#learner-code-map) lists the study priority for each file.
 
 Add calculations that describe the robot and its physical coordinate systems to `simulation/`. `view/robot-transform.ts` only adapts a finished planar pose to Three.js drawing axes. Mesh shapes, materials, lighting, CSS, and numeric display belong to `view/`; changing them does not change the robot's behavior.
 
@@ -149,7 +153,9 @@ For episode 002, study `rigid-transform.ts`, then mounting data in `world.ts` an
 
 For episode 003, start with `transformDirection` and `rotationAboutPivot`, then `pivot-rotation.ts` and the paused command in `robot-simulation.ts`. Follow the preview through `main.ts` to the panel and overlay. The [episode voiceover](../../voiceovers/003-points-directions-pivots.md#7-build-the-capability-in-order) presents the reasons and information flow in that order.
 
-This directory owns its package manifest, lockfile, tests, and build output. Keep commands here. The repository's annotated episode tags are `slam-ep-001` for the original arena and `slam-ep-002` for coordinate frames.
+For episode 004, start with `motion-model.ts`, then follow the physical step through `robot-simulation.ts` and the input → simulation → rendering loop. The [episode voiceover](../../voiceovers/004-robot-motion-model.md#build-the-capability-in-order) explains the movement goal and assumptions before touring each file.
+
+This directory owns its package manifest, lockfile, tests, and build output. Keep commands here. The repository's annotated episode tags are `slam-ep-001` for the original arena, `slam-ep-002` for coordinate frames, and `slam-ep-003` for points, directions, and pivots.
 
 ## Library references
 

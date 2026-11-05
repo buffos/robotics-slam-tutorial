@@ -103,7 +103,7 @@ function start(): void {
   let frame = 0;
   function animate(now: number): void {
     // 1. Sample held input; 2. advance the model by elapsed seconds.
-    simulation.update(drive.read(), Math.max(0, now - previous) / 1000);
+    simulation.step(drive.read(), Math.max(0, now - previous) / 1000);
     previous = now;
     // 3. Derive frame geometry, then display the shared pose and frame snapshot.
     renderState();

@@ -66,6 +66,8 @@ episodes/
     requirements.txt            Direct notebook dependencies
     requirements-lock.txt       Verified Windows dependency versions
     verify_notebook.py          Fresh-kernel execution and widget checks
+  004-robot-motion-model/
+    README.md                   Motion goal, assumptions, and driving experiment
 projects/
   robot-world/
     README.md                   Setup, controls, and architecture
@@ -77,6 +79,7 @@ voiceovers/
   001-robot-world.md             Script, learner code map, and file responsibilities
   002-coordinate-frames.md       Chronological frame lesson and implementation tour
   003-points-directions-pivots.md Point/direction lesson and pivot implementation tour
+  004-robot-motion-model.md      Motion model and chronological implementation tour
 ```
 
 Every lesson gets an `episodes/NNN-topic/` directory. When a lesson includes a notebook, keep its one notebook and exercise assets inside that directory. Use the episode README as the entry point, and link every implemented episode from the index.
